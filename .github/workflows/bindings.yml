@@ -16,8 +16,11 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev libudev-dev
+
       - name: Install Stellar CLI
-        run: cargo install --locked stellar-cli --features opt
+        run: cargo install --locked stellar-cli
 
       - name: Build contracts
         run: stellar contract build
@@ -26,6 +29,7 @@ jobs:
         run: make bindings
 
       - name: Check for uncommitted changes in bindings
+        if: github.ref == 'refs/heads/main'
         run: git diff --exit-code bindings
 
       - name: Upload bindings artifact
